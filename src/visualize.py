@@ -1,0 +1,41 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def plot_digito(X, y, indice):
+    """Plota a imagem de um dígito e mostra seu rótulo real."""
+    digito_imagem = X[indice].reshape(28, 28)
+
+    plt.figure(figsize=(4, 4))
+    plt.imshow(digito_imagem, cmap='binary')
+    plt.title(f"Rótulo Real (Target): {y[indice]}", fontsize=14)
+    plt.axis('off')
+    plt.show()
+
+
+def plot_distribuicao(classes, contagens):
+    """Plota um gráfico de barras com a distribuição das classes."""
+    plt.figure(figsize=(8, 5))
+    plt.bar(classes, contagens, color='steelblue')
+    plt.xticks(classes)
+    plt.xlabel("Dígito")
+    plt.ylabel("Quantidade de amostras")
+    plt.title("Distribuição das classes no MNIST")
+    plt.show()
+
+
+def plot_grade_digitos(X, y):
+    """Plota uma grade contendo dígito (0 a 9)"""
+    fig, axes = plt.subplots(2, 5, figsize=(10, 5))
+
+    for i, ax in enumerate(axes.flat):
+        # Encontra o índice da primeira ocorrência do dígito 'i'
+        indice = np.where(y == i)[0][0]
+        
+        ax.imshow(X[indice].reshape(28, 28), cmap='binary')
+        ax.set_title(f"Dígito: {y[indice]}")
+        ax.axis('off')
+
+    plt.suptitle("Exemplos de cada dígito do MNIST", fontsize=16)
+    plt.tight_layout()
+    plt.show()
