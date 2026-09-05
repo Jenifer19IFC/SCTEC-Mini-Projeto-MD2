@@ -3,7 +3,7 @@ import numpy as np
 
 
 def plot_digito(X, y, indice):
-    """Plota a imagem de um dígito e mostra seu rótulo real."""
+    """Plota a imagem de um dígito e mostra seu rótulo real"""
     digito_imagem = X[indice].reshape(28, 28)
 
     plt.figure(figsize=(4, 4))
@@ -14,7 +14,7 @@ def plot_digito(X, y, indice):
 
 
 def plot_distribuicao(classes, contagens):
-    """Plota um gráfico de barras com a distribuição das classes."""
+    """Plota um gráfico de barras com a distribuição das classes"""
     plt.figure(figsize=(8, 5))
     plt.bar(classes, contagens, color='steelblue')
     plt.xticks(classes)

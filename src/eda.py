@@ -2,7 +2,7 @@ import numpy as np
 
 
 def resumo_shapes(X, y):
-    """Imprime o formato de X e y e as classes existentes."""
+    """Imprime o formato de X e y e as classes existentes"""
     print(f"Formato de X (amostras, pixels por imagem): {X.shape}")
     print(f"Formato de y (rótulos): {y.shape}")
     print(f"Classes únicas existentes: {np.unique(y)}")
