@@ -9,5 +9,5 @@ def resumo_shapes(X, y):
 
 
 def distribuicao_classes(y):
-    """Retorna as classes e a contagem de amostras de cada uma."""
+    """Retorna as classes e a contagem de amostras de cada uma"""
     return np.unique(y, return_counts=True)

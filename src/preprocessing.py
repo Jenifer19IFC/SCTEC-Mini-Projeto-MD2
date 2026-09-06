@@ -5,9 +5,7 @@ def split_treino_teste(X, y, test_size=0.2, random_state=42):
     """Divide X e y em treino (80%) e teste (20%) de forma estratificada por classe
     OBS: stratify=y garante que a proporção de classes seja mantida em ambos os conjuntos
     """
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, stratify=y, random_state=random_state
-    )
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, stratify=y, random_state=random_state)
     return X_train, X_test, y_train, y_test
 
 
