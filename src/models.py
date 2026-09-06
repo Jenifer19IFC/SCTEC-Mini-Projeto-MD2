@@ -1,3 +1,5 @@
+import warnings
+
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
@@ -58,13 +60,16 @@ def buscar_melhor_random_forest(X_train, y_train, param_grid=None, cv=3, n_jobs=
     return grid_rf
 
 
-def get_mlp(hidden_layer_sizes=(128, 64), learning_rate_init=0.001, random_state=42, max_iter=50):
+def get_mlp(hidden_layer_sizes=(128, 64), learning_rate_init=0.001, random_state=42, max_iter=200):
     """Cria um classificador MLP (Perceptron Multicamadas)
 
     Hiperparâmetros:
     - hidden_layer_sizes: quantidade de neurônios em cada camada oculta;
     - learning_rate_init: taxa de aprendizado inicial do otimizador
       baseado em gradiente.
+
+
+    max_iter = limite máximo de tempo/iterações que dou para a rede encontrar uma solução
     """
     return MLPClassifier(hidden_layer_sizes=hidden_layer_sizes,
         learning_rate_init=learning_rate_init,
@@ -73,7 +78,7 @@ def get_mlp(hidden_layer_sizes=(128, 64), learning_rate_init=0.001, random_state
     )
 
 
-def buscar_melhor_mlp(X_train, y_train, param_grid=None, cv=3, n_jobs=-1):
+def buscar_melhor_mlp(X_train, y_train, param_grid=None, cv=3, n_jobs=1):
     """Executa GridSearchCV para encontrar a melhor combinação de
     hidden_layer_sizes e learning_rate_init, usando validação cruzada
     (Retorna o GridSearchCV já ajustado)
@@ -81,9 +86,13 @@ def buscar_melhor_mlp(X_train, y_train, param_grid=None, cv=3, n_jobs=-1):
     if param_grid is None:
         param_grid = {
             'hidden_layer_sizes': [(64,), (128, 64), (128, 64, 32)],
-            'learning_rate_init': [0.01, 0.001, 0.0001],
+            'learning_rate_init': [0.001, 0.0005, 0.0001],
         }
 
     grid_mlp = GridSearchCV(get_mlp(), param_grid, cv=cv, scoring='accuracy', n_jobs=n_jobs)
-    grid_mlp.fit(X_train, y_train)
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
+        grid_mlp.fit(X_train, y_train)
+
     return grid_mlp
