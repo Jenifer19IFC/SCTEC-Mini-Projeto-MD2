@@ -10,7 +10,7 @@ from config.config import DIR_FIGURES
 
 def plot_matriz_confusao(y_true, y_pred, nome_modelo):
     """Plota a matriz de confusão (10x10) de um modelo como mapa de calor"""
-    matriz = confusion_matrix(y_true, y_pred)
+    matriz = confusion_matrix(y_true, y_pred, labels=range(10))
 
     plt.figure(figsize=(7, 6))
     plt.imshow(matriz, cmap='Blues')
@@ -36,6 +36,22 @@ def plot_matriz_confusao(y_true, y_pred, nome_modelo):
     plt.show()
 
     return matriz
+
+
+def plot_confianca(confiancas, titulo, nome_arquivo, cor='#d9534f'):
+    """Plota o histograma da confiança (probabilidade máxima prevista) de um modelo"""
+    plt.figure(figsize=(7, 4))
+    plt.hist(confiancas, bins=20, color=cor, edgecolor='black')
+    plt.axvline(confiancas.mean(), color='black', linestyle='--', label=f"Média: {confiancas.mean():.2%}")
+    plt.title(titulo)
+    plt.xlabel("Probabilidade máxima atribuída pelo modelo")
+    plt.ylabel("Quantidade de amostras")
+    plt.legend()
+    plt.tight_layout()
+
+    os.makedirs(DIR_FIGURES, exist_ok=True)
+    plt.savefig(os.path.join(DIR_FIGURES, nome_arquivo), dpi=150, bbox_inches='tight')
+    plt.show()
 
 
 def calcular_metricas(y_true, y_pred, nome_modelo, tempo_treino=None):

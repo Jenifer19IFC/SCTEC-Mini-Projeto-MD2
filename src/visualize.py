@@ -23,15 +23,16 @@ def plot_digito(X, y, indice):
     plt.show()
 
 
-def plot_distribuicao(classes, contagens):
+def plot_distribuicao(classes, contagens, titulo="Distribuição das classes no MNIST",
+                       nome_arquivo='distribuicao_classes.png'):
     """Plota um gráfico de barras com a distribuição das classes"""
     plt.figure(figsize=(8, 5))
     plt.bar(classes, contagens, color='steelblue')
     plt.xticks(classes)
     plt.xlabel("Dígito")
     plt.ylabel("Quantidade de amostras")
-    plt.title("Distribuição das classes no MNIST")
-    _salvar_figura('distribuicao_classes.png')
+    plt.title(titulo)
+    _salvar_figura(nome_arquivo)
     plt.show()
 
 

@@ -25,7 +25,8 @@ def _dir_modelo(nome_modelo, dir_modelos):
     return dir_modelo
 
 
-def _salvar_modelo(modelo, nome_modelo, dir_modelos):
+def salvar_modelo(modelo, nome_modelo, dir_modelos=DIR_MODELOS):
+    """Salva o modelo treinado em `<dir_modelos>/<nome_modelo>/<nome_modelo>.pkl`"""
     caminho_modelo = os.path.join(_dir_modelo(nome_modelo, dir_modelos), f'{nome_modelo}.pkl')
     with open(caminho_modelo, 'wb') as f:
         pickle.dump(modelo, f)
@@ -68,6 +69,6 @@ def obter_ou_buscar_modelo(nome_modelo, get_fn, buscar_fn, X_train, y_train,
         modelo.fit(X_train, y_train)
         tempo_treino = time.time() - inicio
 
-    _salvar_modelo(modelo, nome_modelo, dir_modelos)
+    salvar_modelo(modelo, nome_modelo, dir_modelos)
 
     return modelo, melhores_params, tempo_treino

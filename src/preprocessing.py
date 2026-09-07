@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.model_selection import train_test_split
 
 
@@ -12,3 +13,15 @@ def split_treino_teste(X, y, test_size=0.2, random_state=42):
 def normalizar_pixels(*conjuntos):
     """Redimensiona os valores de pixel de [0, 255] para a escala [0.0, 1.0]"""
     return tuple(X / 255.0 for X in conjuntos)
+
+
+def remover_classes(X, y, classes_removidas):
+    """Remove do conjunto as classses sinalizadas"""
+    mascara = ~np.isin(y, classes_removidas)
+    return X[mascara], y[mascara]
+
+
+def selecionar_classes(X, y, classes_selecionadas):
+    """Mantém no conjunto apenas as amostras das classes sinalizadas"""
+    mascara = np.isin(y, classes_selecionadas)
+    return X[mascara], y[mascara]
