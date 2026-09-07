@@ -1,5 +1,14 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
+
+from config.config import DIR_FIGURES
+
+
+def _salvar_figura(nome_arquivo, dir_figuras=DIR_FIGURES):
+    os.makedirs(dir_figuras, exist_ok=True)
+    plt.savefig(os.path.join(dir_figuras, nome_arquivo), dpi=150, bbox_inches='tight')
 
 
 def plot_digito(X, y, indice):
@@ -10,6 +19,7 @@ def plot_digito(X, y, indice):
     plt.imshow(digito_imagem, cmap='binary')
     plt.title(f"Rótulo Real (Target): {y[indice]}", fontsize=14)
     plt.axis('off')
+    _salvar_figura(f'digito_{indice}.png')
     plt.show()
 
 
@@ -21,6 +31,7 @@ def plot_distribuicao(classes, contagens):
     plt.xlabel("Dígito")
     plt.ylabel("Quantidade de amostras")
     plt.title("Distribuição das classes no MNIST")
+    _salvar_figura('distribuicao_classes.png')
     plt.show()
 
 
@@ -31,11 +42,12 @@ def plot_grade_digitos(X, y):
     for i, ax in enumerate(axes.flat):
         # Encontra o índice da primeira ocorrência do dígito 'i'
         indice = np.where(y == i)[0][0]
-        
+
         ax.imshow(X[indice].reshape(28, 28), cmap='binary')
         ax.set_title(f"Dígito: {y[indice]}")
         ax.axis('off')
 
     plt.suptitle("Exemplos de cada dígito do MNIST", fontsize=16)
     plt.tight_layout()
+    _salvar_figura('grade_digitos.png')
     plt.show()

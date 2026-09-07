@@ -13,3 +13,10 @@ __pycache__/
 
 # Sistema
 .DS_Store
+
+# Modelos treinados
+models/
+*.pkl
+
+# Figuras geradas
+outputs/

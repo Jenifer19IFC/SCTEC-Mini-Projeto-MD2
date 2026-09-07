@@ -1,7 +1,11 @@
+import os
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_recall_fscore_support
+
+from config.config import DIR_FIGURES
 
 
 def plot_matriz_confusao(y_true, y_pred, nome_modelo):
@@ -24,6 +28,11 @@ def plot_matriz_confusao(y_true, y_pred, nome_modelo):
             plt.text(j, i, matriz[i, j], ha='center', va='center', color=cor_texto)
 
     plt.tight_layout()
+
+    nome_arquivo = nome_modelo.lower().replace(' ', '_')
+    os.makedirs(DIR_FIGURES, exist_ok=True)
+    plt.savefig(os.path.join(DIR_FIGURES, f'matriz_confusao_{nome_arquivo}.png'), dpi=150, bbox_inches='tight')
+
     plt.show()
 
     return matriz
