@@ -15,8 +15,6 @@ __pycache__/
 .DS_Store
 
 # Modelos treinados
-models/
 *.pkl
 
-# Figuras geradas
-outputs/
+

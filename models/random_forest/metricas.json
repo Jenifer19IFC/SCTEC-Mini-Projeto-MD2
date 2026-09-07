@@ -1,0 +1,8 @@
+{
+  "Modelo": "Random Forest",
+  "Acur\u00e1cia": 0.9680714285714286,
+  "Precis\u00e3o (ponderada)": 0.9680769145033719,
+  "Revoca\u00e7\u00e3o (ponderada)": 0.9680714285714286,
+  "F1-Score (ponderado)": 0.9680512680131415,
+  "Tempo de Treino (s)": 44.837165117263794
+}
