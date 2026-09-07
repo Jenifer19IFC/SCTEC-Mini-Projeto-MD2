@@ -2,7 +2,7 @@ import json
 import os
 import time
 
-CAMINHO_PADRAO = os.path.join(os.path.dirname(__file__), '..', 'config', 'melhores_hiperparametros.json')
+from config.config import CAMINHO_MELHORES_HIPERPARAMETROS as CAMINHO_PADRAO
 
 
 def _carregar_todos(caminho):
