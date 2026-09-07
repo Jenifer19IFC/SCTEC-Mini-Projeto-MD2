@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import confusion_matrix
 
 from config.config import DIR_FIGURES
 
@@ -32,6 +33,71 @@ def plot_distribuicao(classes, contagens, titulo="Distribuição das classes no 
     plt.xlabel("Dígito")
     plt.ylabel("Quantidade de amostras")
     plt.title(titulo)
+    _salvar_figura(nome_arquivo)
+    plt.show()
+
+
+def plot_matriz_confusao(y_true, y_pred, nome_modelo):
+    """Plota a matriz de confusão (10x10) de um modelo como mapa de calor"""
+    matriz = confusion_matrix(y_true, y_pred, labels=range(10))
+
+    plt.figure(figsize=(7, 6))
+    plt.imshow(matriz, cmap='Blues')
+    plt.colorbar()
+    plt.title(f"Matriz de Confusão - {nome_modelo}")
+    plt.xlabel("Rótulo Previsto")
+    plt.ylabel("Rótulo Real")
+    plt.xticks(range(10))
+    plt.yticks(range(10))
+
+    limite = matriz.max() / 2
+    for i in range(matriz.shape[0]):
+        for j in range(matriz.shape[1]):
+            cor_texto = 'white' if matriz[i, j] > limite else 'black'
+            plt.text(j, i, matriz[i, j], ha='center', va='center', color=cor_texto)
+
+    plt.tight_layout()
+
+    nome_arquivo = nome_modelo.lower().replace(' ', '_')
+    _salvar_figura(f'matriz_confusao_{nome_arquivo}.png')
+    plt.show()
+
+    return matriz
+
+
+def plot_confianca(confiancas, titulo, nome_arquivo, cor='#d9534f'):
+    """Plota o histograma da confiança (probabilidade máxima prevista) de um modelo"""
+    plt.figure(figsize=(7, 4))
+    plt.hist(confiancas, bins=20, color=cor, edgecolor='black')
+    plt.axvline(confiancas.mean(), color='black', linestyle='--', label=f"Média: {confiancas.mean():.2%}")
+    plt.title(titulo)
+    plt.xlabel("Probabilidade máxima atribuída pelo modelo")
+    plt.ylabel("Quantidade de amostras")
+    plt.legend()
+    plt.tight_layout()
+    _salvar_figura(nome_arquivo)
+    plt.show()
+
+
+def plot_previsao_digito(imagem, probabilidades, titulo="Imagem processada", nome_arquivo='previsao_digito.png'):
+    """Plota a imagem processada ao lado do gráfico de probabilidades previstas pelo modelo"""
+    rotulo_previsto = int(np.argmax(probabilidades))
+
+    fig, (eixo_imagem, eixo_probs) = plt.subplots(1, 2, figsize=(10, 4))
+
+    eixo_imagem.imshow(imagem, cmap='binary')
+    eixo_imagem.set_title(titulo)
+    eixo_imagem.axis('off')
+
+    classes = range(len(probabilidades))
+    cores = ['#5cb85c' if classe == rotulo_previsto else 'steelblue' for classe in classes]
+    eixo_probs.bar(classes, probabilidades, color=cores)
+    eixo_probs.set_xticks(classes)
+    eixo_probs.set_xlabel("Dígito")
+    eixo_probs.set_ylabel("Probabilidade")
+    eixo_probs.set_title(f"Previsão do modelo: {rotulo_previsto}")
+
+    plt.tight_layout()
     _salvar_figura(nome_arquivo)
     plt.show()
 

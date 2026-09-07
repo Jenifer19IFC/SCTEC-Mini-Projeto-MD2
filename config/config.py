@@ -9,3 +9,5 @@ DIR_MODELOS = os.path.join(DIR_RAIZ, 'models')
 
 DIR_OUTPUTS = os.path.join(DIR_RAIZ, 'outputs')
 DIR_FIGURES = os.path.join(DIR_OUTPUTS, 'figures')
+
+DIR_IMAGENS_PROPRIAS = os.path.join(DIR_RAIZ, 'my_images')
