@@ -1,6 +1,7 @@
 import numpy as np
 from PIL import Image
 from scipy.ndimage import center_of_mass, gaussian_filter, shift as deslocar
+from skimage.filters import threshold_otsu
 
 TAMANHO_FINAL = 28
 TAMANHO_DIGITO = 20  # deixa uma margem de 4px de cada lado, como no MNIST original
@@ -32,47 +33,13 @@ def remover_sombra(imagem_array, sigma=31):
     return residuo.astype(np.uint8)
 
 
-def limiar_otsu(imagem_array):
-    """Calcula o limiar de Otsu: o ponto de corte que melhor separa o traço do fundo
-    (encontra automaticamente, a partir do histograma da própria imagem)
-    """
-    histograma, _ = np.histogram(imagem_array, bins=256, range=(0, 256))
-    total = imagem_array.size
-
-    soma_total = np.dot(np.arange(256), histograma)
-    soma_fundo = 0.0
-    peso_fundo = 0.0
-    melhor_variancia = 0.0
-    melhor_limiar = 0
-
-    for limiar in range(256):
-        peso_fundo += histograma[limiar]
-        if peso_fundo == 0:
-            continue
-
-        peso_objeto = total - peso_fundo
-        if peso_objeto == 0:
-            break
-
-        soma_fundo += limiar * histograma[limiar]
-        media_fundo = soma_fundo / peso_fundo
-        media_objeto = (soma_total - soma_fundo) / peso_objeto
-
-        variancia_entre_classes = peso_fundo * peso_objeto * (media_fundo - media_objeto) ** 2
-        if variancia_entre_classes > melhor_variancia:
-            melhor_variancia = variancia_entre_classes
-            melhor_limiar = limiar
-
-    return melhor_limiar
-
-
 def centralizar_digito(imagem_array, tamanho_final=TAMANHO_FINAL, tamanho_digito=TAMANHO_DIGITO):
     """Redimensiona para 28x28 com centralização de massa/bounding box"""
 
     imagem_array = remover_sombra(imagem_array)
 
     # Binariza com o limiar de Otsu para separar o traço do fundo
-    limiar = limiar_otsu(imagem_array)
+    limiar = threshold_otsu(imagem_array)
     mascara_tinta = imagem_array > limiar
 
     linhas, colunas = np.where(mascara_tinta)
@@ -93,9 +60,7 @@ def centralizar_digito(imagem_array, tamanho_final=TAMANHO_FINAL, tamanho_digito
     nova_altura = max(1, round(altura * escala))
     nova_largura = max(1, round(largura * escala))
 
-    digito_redimensionado = np.array(
-        Image.fromarray(digito_recortado).resize((nova_largura, nova_altura), Image.LANCZOS)
-    ).astype(np.float64)
+    digito_redimensionado = np.array(Image.fromarray(digito_recortado).resize((nova_largura, nova_altura), Image.LANCZOS)).astype(np.float64)
 
     # Realça o contraste, perdido no redimensionamento de um traço fino
     if digito_redimensionado.max() > 0:
@@ -121,7 +86,7 @@ def normalizar_imagem(imagem_array):
 
 
 def preprocessar_imagem_propria(caminho, traco_escuro=True):
-    """Pipeline completo: escala de cinza -> inversão de cores (se necessário) ->
+    """Pipeline: escala de cinza -> inversão de cores (se necessário) ->
     redimensionamento para 28x28 com centralização de massa/bounding box -> normalização.
 
     traco_escuro=True  -> traço escuro e fundo branco 
