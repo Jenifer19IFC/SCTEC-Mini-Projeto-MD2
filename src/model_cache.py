@@ -1,10 +1,11 @@
 import json
 import os
 import pickle
+import shutil
 import time
 
 from config.config import CAMINHO_MELHORES_HIPERPARAMETROS as CAMINHO_PADRAO
-from config.config import DIR_MODELOS
+from config.config import DIR_MODELOS, DIR_APP_MODELOS, MODELOS_APP
 
 
 def _carregar_todos(caminho):
@@ -26,10 +27,18 @@ def _dir_modelo(nome_modelo, dir_modelos):
 
 
 def salvar_modelo(modelo, nome_modelo, dir_modelos=DIR_MODELOS):
-    """Salva o modelo treinado em `<dir_modelos>/<nome_modelo>/<nome_modelo>.pkl`"""
+    """Salva o modelo treinado em `<dir_modelos>/<nome_modelo>/<nome_modelo>.pkl`
+
+    Modelos usados pelo app (`MODELOS_APP`) também são copiados para
+    `app/models/<nome_modelo>.pkl`; experimentos (ex: mlp_class_masking) não vão para o app.
+    """
     caminho_modelo = os.path.join(_dir_modelo(nome_modelo, dir_modelos), f'{nome_modelo}.pkl')
     with open(caminho_modelo, 'wb') as f:
         pickle.dump(modelo, f)
+
+    if nome_modelo in MODELOS_APP:
+        os.makedirs(DIR_APP_MODELOS, exist_ok=True)
+        shutil.copyfile(caminho_modelo, os.path.join(DIR_APP_MODELOS, f'{nome_modelo}.pkl'))
 
 
 def salvar_metricas_modelo(metricas, nome_modelo, dir_modelos=DIR_MODELOS):

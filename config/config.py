@@ -11,3 +11,8 @@ DIR_OUTPUTS = os.path.join(DIR_RAIZ, 'outputs')
 DIR_FIGURES = os.path.join(DIR_OUTPUTS, 'figures')
 
 DIR_IMAGENS_PROPRIAS = os.path.join(DIR_RAIZ, 'my_images')
+
+DIR_APP = os.path.join(DIR_RAIZ, 'app')
+DIR_APP_MODELOS = os.path.join(DIR_APP, 'models')
+
+MODELOS_APP = ('knn', 'random_forest', 'mlp')  

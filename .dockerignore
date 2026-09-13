@@ -1,0 +1,11 @@
+venv/
+.venv/
+env/
+.git/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+outputs/
+my_images/
+models/
+app/models/*.pkl
