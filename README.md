@@ -73,7 +73,14 @@ Classificação de dígitos manuscritos (MNIST) com comparação entre KNN, Rand
 
 ## Como executar
 
-### 1. Treinar os modelos (necessário antes de tudo)
+### 1. Clonar o repositório
+
+```bash
+git clone https://github.com/Jenifer19IFC/SCTEC-Mini-Projeto-MD2.git
+cd SCTEC-Mini-Projeto-MD2
+```
+
+### 2. Treinar os modelos (necessário antes de tudo)
 
 ```bash
 python3 -m venv venv
@@ -86,7 +93,7 @@ ou `jupyter notebook` (esses dois últimos exigem instalar `pip install notebook
 ou `jupyterlab` à parte, não incluídos no `requirements.txt`). Isso baixa o MNIST,
 treina os 3 modelos e salva os `.pkl` em `models/` e `app/models/`.
 
-### 2. Rodar o app
+### 3. Rodar o app
 
 **Via Docker (recomendado):**
 
