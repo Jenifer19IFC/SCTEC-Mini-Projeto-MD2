@@ -16,7 +16,7 @@ def normalizar_pixels(*conjuntos):
 
 
 def remover_classes(X, y, classes_removidas):
-    """Remove do conjunto as classses sinalizadas"""
+    """Remove do conjunto as classes sinalizadas"""
     mascara = ~np.isin(y, classes_removidas)
     return X[mascara], y[mascara]
 

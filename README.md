@@ -80,9 +80,9 @@ de cada classe; o ROC-AUC usa a estratégia one-vs-rest sobre as probabilidades 
 
 | Modelo | Acurácia | Precisão | Revocação | F1-Score | ROC-AUC | Tempo de Treino (s) |
 |---|---|---|---|---|---|---|
-| KNN | 0,9709 | 0,9711 | 0,9709 | 0,9708 | 0,9963 | 0,01 |
-| Random Forest | 0,9681 | 0,9681 | 0,9681 | 0,9681 | 0,9991 | 46,10 |
-| **MLP (selecionado)** | **0,9804** | **0,9803** | **0,9804** | **0,9803** | **0,9996** | 9,26 |
+| KNN | 0,9709 | 0,9711 | 0,9709 | 0,9708 | 0,9963 | 0,0067 |
+| Random Forest | 0,9681 | 0,9681 | 0,9681 | 0,9681 | 0,9991 | 45,49 |
+| **MLP (selecionado)** | **0,9804** | **0,9803** | **0,9804** | **0,9803** | **0,9996** | 8,99 |
 
 O **MLP é o modelo selecionado** por ter obtido a maior acurácia e o maior F1-Score
 entre os três, ou seja, o melhor desempenho geral de classificação no conjunto de teste.
