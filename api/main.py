@@ -1,12 +1,9 @@
 import logging
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
-
 from api.services import carregar_modelo
 
 logger = logging.getLogger('uvicorn.error')
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -17,13 +14,13 @@ async def lifespan(app: FastAPI):
         app.state.modelo = carregar_modelo()
         logger.info('Modelo MLP carregado na memória')
     except (FileNotFoundError, OSError) as erro:
-        # A API sobe mesmo sem modelo; o /health informa que ele não está disponível
+        # API sobe mesmo sem modelo e o /health informa que ele não está disponível
         app.state.modelo = None
         logger.error(f'Falha ao carregar o modelo: {erro}')
 
-    yield  # a API atende requisições enquanto está aqui
+    yield  # atende requisições enquanto está aqui
 
-    # Encerramento: libera o modelo da memória
+    # Ao encerrar, libera o modelo da memória
     app.state.modelo = None
 
 
