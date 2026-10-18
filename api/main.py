@@ -1,6 +1,7 @@
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from api.routers import router
 from api.services import carregar_modelo
 
 logger = logging.getLogger('uvicorn.error')
@@ -30,3 +31,5 @@ app = FastAPI(
     version='1.0.0',
     lifespan=lifespan,
 )
+
+app.include_router(router)
