@@ -1,16 +1,18 @@
 import numpy as np
 import pandas as pd
-from sklearn.metrics import confusion_matrix, accuracy_score, precision_recall_fscore_support
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_recall_fscore_support, roc_auc_score
 
 
-def calcular_metricas(y_true, y_pred, nome_modelo, tempo_treino=None):
+def calcular_metricas(y_true, y_pred, nome_modelo, tempo_treino=None, y_proba=None):
     """Calcula métricas:
         - Acurácia Global (Accuracy)
         - Precisão Média Ponderada (Precision)
         - Revocação/Sensibilidade Média Ponderada (Recall)
         - F1-Score Ponderado (F1-Score)
+        - ROC-AUC Ponderado
     """
     precisao, revocacao, f1, _ = precision_recall_fscore_support(y_true, y_pred, average='weighted', zero_division=0)
+    roc_auc = roc_auc_score(y_true, y_proba, multi_class='ovr', average='weighted') if y_proba is not None else None
 
     return {
         'Modelo': nome_modelo,
@@ -18,6 +20,7 @@ def calcular_metricas(y_true, y_pred, nome_modelo, tempo_treino=None):
         'Precisão (ponderada)': precisao,
         'Revocação (ponderada)': revocacao,
         'F1-Score (ponderado)': f1,
+        'ROC-AUC (ponderado, OvR)': roc_auc,
         'Tempo de Treino (s)': tempo_treino,
     }
 

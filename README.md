@@ -71,6 +71,25 @@ Classificação de dígitos manuscritos (MNIST) com comparação entre KNN, Rand
 └── .dockerignore
 ```
 
+## Métricas dos modelos
+
+Métricas calculadas no **conjunto de teste** (20% do MNIST, 14.000 imagens, divisão
+estratificada por classe), salvas em `models/<modelo>/metricas.json` pelo notebook.
+Precisão, revocação, F1-Score e ROC-AUC são médias ponderadas pelo número de amostras
+de cada classe; o ROC-AUC usa a estratégia one-vs-rest sobre as probabilidades do `predict_proba`.
+
+| Modelo | Acurácia | Precisão | Revocação | F1-Score | ROC-AUC | Tempo de Treino (s) |
+|---|---|---|---|---|---|---|
+| KNN | 0,9709 | 0,9711 | 0,9709 | 0,9708 | 0,9963 | 0,01 |
+| Random Forest | 0,9681 | 0,9681 | 0,9681 | 0,9681 | 0,9991 | 46,10 |
+| **MLP (selecionado)** | **0,9804** | **0,9803** | **0,9804** | **0,9803** | **0,9996** | 9,26 |
+
+O **MLP é o modelo selecionado** por ter obtido a maior acurácia e o maior F1-Score
+entre os três, ou seja, o melhor desempenho geral de classificação no conjunto de teste.
+
+MSE e R² não se aplicam a este projeto, pois são métricas de regressão e o problema é
+de classificação multiclasse (10 dígitos).
+
 ## Como executar
 
 ### 1. Clonar o repositório
