@@ -16,5 +16,6 @@ __pycache__/
 
 # Modelos treinados
 *.pkl
+!models/mlp/mlp.pkl
 
 
