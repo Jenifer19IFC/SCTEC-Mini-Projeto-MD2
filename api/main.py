@@ -15,19 +15,19 @@ async def lifespan(app: FastAPI):
         app.state.modelo = carregar_modelo()
         logger.info('Modelo MLP carregado na memória')
     except (FileNotFoundError, OSError) as erro:
-        # API sobe mesmo sem modelo e o /health informa que ele não está disponível
+        # API sobe mesmo sem modelo e o health informa que ele não está disponível
         app.state.modelo = None
         logger.error(f'Falha ao carregar o modelo: {erro}')
 
     yield  # atende requisições enquanto está aqui
 
-    # Ao encerrar, libera o modelo da memória
+    # Ao final, libera o modelo da memória
     app.state.modelo = None
 
 
 app = FastAPI(
     title='API de Classificação de Dígitos (MNIST)',
-    description='Classifica dígitos manuscritos (0-9) com o MLP treinado no notebook `mnist.ipynb`.',
+    description='Classifica dígitos manuscritos (0-9) com o MLP (Perceptron Multicamadas).',
     version='1.0.0',
     lifespan=lifespan,
 )

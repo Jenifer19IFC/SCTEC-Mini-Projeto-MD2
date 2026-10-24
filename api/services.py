@@ -9,20 +9,20 @@ CAMINHO_MODELO = os.path.join(DIR_MODELOS, 'mlp', 'mlp.pkl')
 
 
 def carregar_modelo(caminho=CAMINHO_MODELO):
-    """Carrega o MLP serializado do disco (chamado uma única vez, no lifespan da API)"""
+    """Carrega o MLP serializado do disco"""
     with open(caminho, 'rb') as f:
         return pickle.load(f)
 
 
 def prever_digito(modelo, pixels):
-    """Recebe os 784 pixels (0 a 255) e retorna digito e confianca"""
+    """Recebe os 784 pixels (0 a 255), retorna digito e confiança"""
     if max(pixels) == 0:
-        raise ValueError('Imagem vazia: todos os pixels são 0, nenhum dígito foi desenhado.')
+        raise ValueError('Imagem vazia: nenhum dígito foi desenhado.')
 
-    # Mesmo pré-processamento do treino: 1 imagem com 784 pixels, normalizada para 0 a 1
+    # Mesmo pré-processamento do treino: normaliza imagem com 784 pixels para 0 a 1
     X = np.array(pixels).reshape(1, -1) / 255.0
 
-    probabilidades = modelo.predict_proba(X)[0]  # 10 probabilidades, uma para cada dígito
+    probabilidades = modelo.predict_proba(X)[0]  
     posicao = probabilidades.argmax()            
 
     digito = int(modelo.classes_[posicao])
