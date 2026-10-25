@@ -30,6 +30,9 @@ app = FastAPI(
     description='Classifica dígitos manuscritos (0-9) com o MLP (Perceptron Multicamadas).',
     version='1.0.0',
     lifespan=lifespan,
+    openapi_tags=[
+        {'name': 'Monitoramento', 'description': 'Saúde da API e do modelo.'},
+        {'name': 'Inferência', 'description': 'Predição do dígito a partir dos pixels.'},
+    ],
 )
-
 app.include_router(router)

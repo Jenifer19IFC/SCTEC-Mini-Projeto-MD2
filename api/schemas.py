@@ -25,5 +25,6 @@ class SaidaPredicao(BaseModel):
 
 class SaidaHealth(BaseModel):
     """Resposta do GET /health"""
+    model_config = {'json_schema_extra': {'examples': [{'status': 'OK', 'modelo_carregado': True}]}}
     status: str = Field(description='Situação do serviço (ex.: "OK").')
     modelo_carregado: bool = Field(description='Indica se o modelo de ML está carregado na memória RAM.')
