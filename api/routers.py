@@ -17,7 +17,7 @@ def predict(entrada: EntradaPredicao, request: Request):
     """Classifica o dígito a partir da imagem enviada e retorna o dígito previsto e a confiança do modelo."""
     modelo = request.app.state.modelo  # já está na memória
     if modelo is None:
-        raise HTTPException(statsus_code=500, detail='Modelo não está carregado no servidor.')
+        raise HTTPException(status_code=500, detail='Modelo não está carregado no servidor.')
 
     try:
         digito, confianca = prever_digito(modelo, entrada.pixels)

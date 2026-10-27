@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from api.routers import router
 from api.services import carregar_modelo
+from fastapi.responses import RedirectResponse
 
 logger = logging.getLogger('uvicorn.error')
 
@@ -36,3 +37,8 @@ app = FastAPI(
     ],
 )
 app.include_router(router)
+
+@app.get('/', include_in_schema=False)
+def raiz():
+    """Redireciona a raiz para a documentação Swagger"""
+    return RedirectResponse(url='/docs')
