@@ -21,7 +21,7 @@ para revisão humana os casos em que o modelo está inseguro.
 
 ## Origem do modelo
 
-O projeto **aproveita o Mini-Projeto de Mineração de Dados 2 (MD2)**: *Classificação de
+O projeto **aproveita o Mini-Projeto de Módulo 2 (MD2)**: *Classificação de
 Dígitos Manuscritos: Comparação de Modelos e Análise de Class Masking, OOD e
 Overconfidence*. Nesse projeto foram feitos:
 
