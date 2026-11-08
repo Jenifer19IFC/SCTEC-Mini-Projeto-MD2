@@ -1,118 +1,118 @@
-# API de Classificação de Dígitos Manuscritos (MNIST)
+# Handwritten Digit Classification API (MNIST)
 
-API REST, feita com **FastAPI**, que recebe a imagem de um dígito manuscrito (0 a 9) e
-devolve o dígito previsto e a confiança do modelo. O modelo é um **MLP (Perceptron
-Multicamadas)** treinado com Scikit-Learn no dataset MNIST.
+A REST API, built with **FastAPI**, that receives the image of a handwritten digit (0 to 9) and
+returns the predicted digit and the model's confidence. The model is an **MLP (Multilayer
+Perceptron)** trained with Scikit-Learn on the MNIST dataset.
 
-## Problema de negócio
+## Business problem
 
-Muitos processos ainda dependem de números escritos à mão: formulários em papel, CEPs
-em envelopes, valores em cheques, fichas de cadastro e provas. Digitar esses números
-manualmente é lento, caro e sujeito a erros.
+Many processes still rely on handwritten numbers: paper forms, ZIP codes
+on envelopes, amounts on checks, registration forms and exams. Typing these numbers
+manually is slow, expensive and error-prone.
 
-O modelo deste projeto **automatiza a leitura de dígitos manuscritos**. Ao publicá-lo
-como API, qualquer sistema (um app de digitalização de documentos, uma esteira de
-triagem de correspondências, um sistema de OCR) pode enviar a imagem de um dígito por
-HTTP e receber a classificação pronta. O sistema que chama a API não precisa saber
-nada de Machine Learning.
+The model in this project **automates the reading of handwritten digits**. By publishing it
+as an API, any system (a document digitization app, a mail sorting
+pipeline, an OCR system) can send the image of a digit over
+HTTP and receive the classification ready to use. The system calling the API doesn't need to know
+anything about Machine Learning.
 
-A API também devolve a **confiança** da predição. Com ela, o sistema cliente pode mandar
-para revisão humana os casos em que o modelo está inseguro.
+The API also returns the prediction's **confidence**. With it, the client system can send
+the cases where the model is uncertain to human review.
 
-## Origem do modelo
+## Model origin
 
-O projeto **aproveita o Mini-Projeto de Módulo 2 (MD2)**: *Classificação de
-Dígitos Manuscritos: Comparação de Modelos e Análise de Class Masking, OOD e
-Overconfidence*. Nesse projeto foram feitos:
+The project **builds on the Module 2 Mini-Project (MD2)**: *Handwritten Digit
+Classification: Model Comparison and Analysis of Class Masking, OOD and
+Overconfidence*. That project included:
 
-- Treino e comparação de 3 modelos (KNN, Random Forest e MLP) no MNIST, com busca de
-  hiperparâmetros via `GridSearchCV` (notebook `mnist.ipynb`).
-- Testes de robustez: **class masking** (MLP treinado sem as classes 4 e 7),
-  **inferência OOD** (entradas fora da distribuição) e classificação de **fotos
-  manuscritas próprias**, com um pipeline de pré-processamento (escala de cinza, remoção
-  de sombra, limiar de Otsu, centralização).
-- Uma aplicação Streamlit que faz votação por maioria entre os 3 modelos.
+- Training and comparison of 3 models (KNN, Random Forest and MLP) on MNIST, with
+  hyperparameter search via `GridSearchCV` (notebook `mnist.ipynb`).
+- Robustness tests: **class masking** (MLP trained without classes 4 and 7),
+  **OOD inference** (out-of-distribution inputs) and classification of **my own
+  handwritten photos**, with a preprocessing pipeline (grayscale, shadow
+  removal, Otsu thresholding, centering).
+- A Streamlit application that performs majority voting among the 3 models.
 
-O **MLP** foi o modelo escolhido para a API, porque teve o melhor desempenho no conjunto
-de teste. Ele está serializado em `models/mlp/mlp.pkl`.
+The **MLP** was the model chosen for the API, because it had the best performance on the test
+set. It is serialized in `models/mlp/mlp.pkl`.
 
-**Base de dados:** [MNIST](https://www.kaggle.com/datasets/hojjatk/mnist-dataset/data),
-com 70.000 imagens 28x28 em escala de cinza. É carregada via `fetch_openml`
-(`sklearn.datasets`). Cada imagem vira um vetor de 784 pixels com valores de 0 a 255
-(dígito claro em fundo escuro).
+**Dataset:** [MNIST](https://www.kaggle.com/datasets/hojjatk/mnist-dataset/data),
+with 70,000 28x28 grayscale images. It is loaded via `fetch_openml`
+(`sklearn.datasets`). Each image becomes a vector of 784 pixels with values from 0 to 255
+(light digit on a dark background).
 
-![Explicação da escala de pixels do MNIST](images/explicacao_mnist.png)
+![Explanation of the MNIST pixel scale](images/mnist_explanation_en.png)
 
-### Métricas dos modelos
+### Model metrics
 
-Métricas calculadas no **conjunto de teste**: 20% do MNIST (14.000 imagens), com divisão
-estratificada por classe. Precisão, revocação, F1-Score e ROC-AUC são médias ponderadas
-pelo número de amostras de cada classe. O ROC-AUC usa a estratégia one-vs-rest.
+Metrics computed on the **test set**: 20% of MNIST (14,000 images), with a
+class-stratified split. Precision, recall, F1-Score and ROC-AUC are averages weighted
+by the number of samples in each class. ROC-AUC uses the one-vs-rest strategy.
 
-| Modelo | Acurácia | Precisão | Revocação | F1-Score | ROC-AUC | Tempo de Treino (s) |
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC | Training Time (s) |
 |---|---|---|---|---|---|---|
-| KNN | 0,9709 | 0,9711 | 0,9709 | 0,9708 | 0,9963 | 0,0067 |
-| Random Forest | 0,9681 | 0,9681 | 0,9681 | 0,9681 | 0,9991 | 45,49 |
-| **MLP (usado na API)** | **0,9804** | **0,9803** | **0,9804** | **0,9803** | **0,9996** | 8,99 |
+| KNN | 0.9709 | 0.9711 | 0.9709 | 0.9708 | 0.9963 | 0.0067 |
+| Random Forest | 0.9681 | 0.9681 | 0.9681 | 0.9681 | 0.9991 | 45.49 |
+| **MLP (used in the API)** | **0.9804** | **0.9803** | **0.9804** | **0.9803** | **0.9996** | 8.99 |
 
-## Tecnologias utilizadas
+## Technologies used
 
-**Linguagem:** Python 3.9
+**Language:** Python 3.9
 
-| Biblioteca | Versão | Uso |
+| Library | Version | Usage |
 |---|---|---|
-| FastAPI | 0.128.8 | Framework da API REST |
-| Pydantic | 2.13.5 | Validação dos dados de entrada e saída (schemas) |
-| Uvicorn | 0.39.0 | Servidor ASGI que executa a API |
-| Scikit-Learn | 1.6.1 | Treino e inferência dos modelos (MLP, KNN, Random Forest) |
-| NumPy | 2.0.2 | Manipulação dos pixels / vetores |
-| Pandas | 2.3.3 | Tabelas de métricas no notebook |
-| SciPy | 1.13.1 | Pré-processamento de imagens (`scipy.ndimage`) |
-| Scikit-Image | 0.24.0 | Limiar de Otsu no pré-processamento |
-| Pillow | 11.3.0 | Leitura e conversão de imagens |
-| Matplotlib | 3.9.4 | Gráficos do notebook |
-| Streamlit | 1.50.0 | Aplicação web de demonstração |
-| ipykernel | 6.31.0 | Execução do notebook Jupyter |
+| FastAPI | 0.128.8 | REST API framework |
+| Pydantic | 2.13.5 | Input and output data validation (schemas) |
+| Uvicorn | 0.39.0 | ASGI server that runs the API |
+| Scikit-Learn | 1.6.1 | Model training and inference (MLP, KNN, Random Forest) |
+| NumPy | 2.0.2 | Pixel / vector manipulation |
+| Pandas | 2.3.3 | Metrics tables in the notebook |
+| SciPy | 1.13.1 | Image preprocessing (`scipy.ndimage`) |
+| Scikit-Image | 0.24.0 | Otsu thresholding in preprocessing |
+| Pillow | 11.3.0 | Image reading and conversion |
+| Matplotlib | 3.9.4 | Notebook charts |
+| Streamlit | 1.50.0 | Demo web application |
+| ipykernel | 6.31.0 | Running the Jupyter notebook |
 
-Também são usados **Docker** e **Docker Compose** para empacotar a aplicação Streamlit.
+**Docker** and **Docker Compose** are also used to package the Streamlit application.
 
-## Estrutura do projeto
+## Project structure
 
 ```
 .
-├── api/                       # API REST (FastAPI)
-│   ├── main.py                # cria o app e carrega o modelo na inicialização (lifespan)
-│   ├── routers.py             # endpoints /health e /predict
-│   ├── schemas.py             # schemas Pydantic de entrada e saída
-│   └── services.py            # carregamento do modelo e lógica de predição
-├── test_API.py                # script de exemplo que envia uma imagem para o /predict
+├── api/                       # REST API (FastAPI)
+│   ├── main.py                # creates the app and loads the model on startup (lifespan)
+│   ├── routers.py             # /health and /predict endpoints
+│   ├── schemas.py             # Pydantic input and output schemas
+│   └── services.py            # model loading and prediction logic
+├── test_API.py                # example script that sends an image to /predict
 │
 ├── models/
-│   ├── mlp/mlp.pkl            # modelo MLP serializado, usado pela API
-│   └── */metricas.json        # métricas de cada modelo
+│   ├── mlp/mlp.pkl            # serialized MLP model, used by the API
+│   └── */metricas.json        # metrics for each model
 │
-├── mnist.ipynb                # notebook: EDA, treino, avaliação, experimentos
-├── src/                       # módulos usados pelo notebook
-├── config/                    # caminhos, constantes e cache de hiperparâmetros
-├── app/                       # aplicação Streamlit (demonstração)
-├── outputs/figures/           # gráficos gerados pelo notebook
-├── my_images/                 # fotos próprias de dígitos para teste
-├── images/                    # imagens da documentação
-├── requirements.txt           # dependências do projeto
+├── mnist.ipynb                # notebook: EDA, training, evaluation, experiments
+├── src/                       # modules used by the notebook
+├── config/                    # paths, constants and hyperparameter cache
+├── app/                       # Streamlit application (demo)
+├── outputs/figures/           # charts generated by the notebook
+├── my_images/                 # my own digit photos for testing
+├── images/                    # documentation images
+├── requirements.txt           # project dependencies
 ├── Dockerfile
 └── docker-compose.yml
 ```
 
-## Instalação e execução
+## Installation and running
 
-### 1. Clonar o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Jenifer19IFC/SCTEC-Mini-Projeto-MD2.git
 cd SCTEC-Mini-Projeto-MD2
 ```
 
-### 2. Criar e ativar o ambiente virtual (venv)
+### 2. Create and activate the virtual environment (venv)
 
 **Linux / macOS:**
 
@@ -128,46 +128,46 @@ python -m venv venv
 venv\Scripts\Activate.ps1
 ```
 
-### 3. Instalar as dependências
+### 3. Install the dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Iniciar o servidor com Uvicorn
+### 4. Start the server with Uvicorn
 
-O modelo treinado (`models/mlp/mlp.pkl`) já vem no repositório, então não é preciso
-rodar o notebook antes. Na raiz do projeto:
+The trained model (`models/mlp/mlp.pkl`) is already included in the repository, so there's no need to
+run the notebook first. From the project root:
 
 ```bash
 uvicorn api.main:app --reload
 ```
 
-A API fica disponível em **http://127.0.0.1:8000**. O modelo é lido do disco uma única
-vez, quando o servidor inicia, e fica em memória para todas as requisições.
+The API will be available at **http://127.0.0.1:8000**. The model is read from disk only
+once, when the server starts, and stays in memory for all requests.
 
-## Documentação da API
+## API documentation
 
 ### Swagger
 
-Com o servidor rodando, a documentação interativa fica em:
+With the server running, the interactive documentation is available at:
 
 - **Swagger UI:** http://127.0.0.1:8000/docs
 - **ReDoc:** http://127.0.0.1:8000/redoc
 
-Pelo Swagger dá para testar os endpoints direto no navegador (botão *Try it out*). O
-`/predict` já vem com um exemplo de payload preenchido.
+Through Swagger you can test the endpoints directly in the browser (*Try it out* button). The
+`/predict` endpoint comes with a pre-filled example payload.
 
 ### Endpoints
 
-| Método | Rota | Descrição |
+| Method | Route | Description |
 |---|---|---|
-| GET | `/health` | Verifica se a API está no ar e se o modelo foi carregado |
-| POST | `/predict` | Classifica um dígito manuscrito |
+| GET | `/health` | Checks whether the API is up and the model has been loaded |
+| POST | `/predict` | Classifies a handwritten digit |
 
 ### `GET /health`
 
-**Resposta (200):**
+**Response (200):**
 
 ```json
 {
@@ -178,20 +178,20 @@ Pelo Swagger dá para testar os endpoints direto no navegador (botão *Try it ou
 
 ### `POST /predict`
 
-**Corpo da requisição:** o campo `pixels` é uma lista com **exatamente 784 números**. São
-os pixels da imagem 28x28 achatada linha a linha, com valores de **0 (preto) a 255
-(branco)**. O dígito deve estar claro sobre fundo escuro, como no MNIST.
+**Request body:** the `pixels` field is a list of **exactly 784 numbers**. These are
+the pixels of the 28x28 image flattened row by row, with values from **0 (black) to 255
+(white)**. The digit must be light on a dark background, as in MNIST.
 
 ```json
 {
-  "pixels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, "... (784 valores no total)"]
+  "pixels": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, "... (784 values in total)"]
 }
 ```
 
-O exemplo do Swagger é uma imagem com um traço vertical no centro, parecido com o dígito
+The Swagger example is an image with a vertical stroke in the center, similar to the digit
 **1**. 
 
-**Resposta (200):**
+**Response (200):**
 
 ```json
 {
@@ -200,67 +200,67 @@ O exemplo do Swagger é uma imagem com um traço vertical no centro, parecido co
 }
 ```
 
-| Campo | Tipo | Descrição |
+| Field | Type | Description |
 |---|---|---|
-| `digito` | int | Dígito previsto (0 a 9) |
-| `confianca` | float | Probabilidade atribuída pelo modelo ao dígito previsto (0 a 1) |
+| `digito` | int | Predicted digit (0 to 9) |
+| `confianca` | float | Probability assigned by the model to the predicted digit (0 to 1) |
 
 
-#### Testando a API com uma imagem (`test_API.py`)
+#### Testing the API with an image (`test_API.py`)
 
-O arquivo [`test_API.py`](test_API.py), na raiz do projeto, é um script de exemplo de
-chamada ao `/predict`. Ele abre uma imagem de `my_images/`
-(`my_images/dark/6_dark.png`), converte para 28x28 em escala de cinza, achata nos 784
-pixels, envia para a API e imprime a resposta (`{'digito': ..., 'confianca': ...}`).
+The [`test_API.py`](test_API.py) file, in the project root, is an example script that
+calls `/predict`. It opens an image from `my_images/`
+(`my_images/dark/6_dark.png`), converts it to 28x28 grayscale, flattens it into the 784
+pixels, sends it to the API and prints the response (`{'digito': ..., 'confianca': ...}`).
 
-Com o servidor rodando, em outro terminal (com o venv ativo):
+With the server running, in another terminal (with the venv active):
 
 ```bash
 python test_API.py
 ```
 
-Para testar outra imagem, troque o caminho em `Image.open(...)` no script.
+To test another image, change the path in `Image.open(...)` in the script.
 
-> O `test_API.py` faz apenas a conversão para cinza e o redimensionamento, então funciona
-> para imagens já no padrão MNIST (dígito claro, centralizado, em fundo escuro), como as de
-> `my_images/dark/`. Para fotos em papel (`my_images/light/`), é preciso o pré-processamento
-> completo de `src/manuscript.py` (inversão de cores, remoção de sombra, limiar de Otsu e
-> centralização), usado no notebook.
+> `test_API.py` only performs grayscale conversion and resizing, so it works
+> for images already in the MNIST format (light, centered digit on a dark background), such as those in
+> `my_images/dark/`. For photos on paper (`my_images/light/`), the full preprocessing
+> from `src/manuscript.py` (color inversion, shadow removal, Otsu thresholding and
+> centering), used in the notebook, is required.
 
-### Respostas de erro
+### Error responses
 
-| Código | Quando ocorre | Exemplo de resposta |
+| Code | When it occurs | Example response |
 |---|---|---|
-| 422 | Payload fora do formato: quantidade de pixels diferente de 784, valores fora de 0–255 ou não numéricos | `{"detail": [{"type": "too_short", "loc": ["body", "pixels"], "msg": "List should have at least 784 items after validation, not 3", ...}]}` |
-| 400 | Formato válido, mas imagem vazia (todos os pixels em 0) | `{"detail": "Imagem vazia: nenhum dígito foi desenhado."}` |
-| 500 | Modelo não carregado ou erro interno na predição | `{"detail": "Erro interno ao executar a predição."}` |
+| 422 | Malformed payload: number of pixels other than 784, values outside 0–255 or non-numeric | `{"detail": [{"type": "too_short", "loc": ["body", "pixels"], "msg": "List should have at least 784 items after validation, not 3", ...}]}` |
+| 400 | Valid format, but empty image (all pixels set to 0) | `{"detail": "Imagem vazia: nenhum dígito foi desenhado."}` |
+| 500 | Model not loaded or internal error during prediction | `{"detail": "Erro interno ao executar a predição."}` |
 
-## Aplicação Streamlit (opcional)
+## Streamlit application (optional)
 
-O projeto também tem uma interface web, herdada do projeto original. Ela classifica fotos
-de dígitos com os 3 modelos e mostra o voto por maioria. A aplicação precisa dos modelos
-KNN e Random Forest em `app/models/`, que são gerados ao rodar o `mnist.ipynb` até o fim.
+The project also has a web interface, inherited from the original project. It classifies photos
+of digits with the 3 models and shows the majority vote. The application requires the
+KNN and Random Forest models in `app/models/`, which are generated by running `mnist.ipynb` to the end.
 
 ```bash
 # Via Docker
 docker compose up --build
 
-# Ou direto no venv
+# Or directly in the venv
 streamlit run app/app.py
 ```
 
-Acesse **http://localhost:8501**.
+Go to **http://localhost:8501**.
 
-## Possíveis melhorias futuras
+## Possible future improvements
 
-- Endpoint que receba o arquivo de imagem diretamente (upload), com o pré-processamento
-  feito na própria API
-- Mecanismo de rejeição (responder "não sei") quando a confiança for baixa ou a entrada
-  estiver fora da distribuição
-- Containerizar também a API (Dockerfile/serviço no `docker-compose.yml`)
-- Suporte a múltiplos dígitos na mesma imagem
+- An endpoint that receives the image file directly (upload), with preprocessing
+  done in the API itself
+- A rejection mechanism (answering "I don't know") when confidence is low or the input
+  is out of distribution
+- Containerize the API as well (Dockerfile/service in `docker-compose.yml`)
+- Support for multiple digits in the same image
 
-## Demonstração
+## Demo
 
-- [Vídeo API](https://youtu.be/hYgR2FYq-Fk)
-- [Vídeo do projeto base (MD2)](https://youtu.be/Q5wTwOeNF98)
+- [API video](https://youtu.be/hYgR2FYq-Fk)
+- [Base project video (MD2)](https://youtu.be/Q5wTwOeNF98)
